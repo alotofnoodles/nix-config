@@ -5,9 +5,16 @@
 # Add aliases here, run `home-manager switch`, done. No rc-file editing.
 { lib, ... }:
 let
+  # Absolute --flake path so these work from any directory, not just the repo.
+  flakeDir = "~/Work/tries/2026-07-01-nix-config";
+
   shellAliases = {
     e = "nvim";
     music = "cliamp --provider ytmusic";
+
+    # Home Manager
+    hms = "home-manager switch --flake ${flakeDir}#foomaxchu@pasokon";
+    hmu = "nix flake update --flake ${flakeDir} && home-manager switch --flake ${flakeDir}#foomaxchu@pasokon";
   };
 
   renderAlias = name: value: "alias ${name}=${lib.escapeShellArg value}";
