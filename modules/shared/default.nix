@@ -5,6 +5,7 @@
     ./packages.nix
     ./programs.nix
     ./files.nix
+    ./aliases.nix
   ];
 
   # Let Home Manager manage itself.
