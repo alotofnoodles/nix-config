@@ -1,2 +1,5 @@
 result
 result-*
+
+# Claude Code per-machine state, not config
+.claude/settings.local.json
