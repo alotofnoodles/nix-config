@@ -6,15 +6,16 @@
 { lib, ... }:
 let
   # Absolute --flake path so these work from any directory, not just the repo.
-  flakeDir = "~/Work/tries/2026-07-01-nix-config";
+  flakeDir = "~/nix-config";
 
   shellAliases = {
     e = "nvim";
     music = "cliamp --provider ytmusic";
 
-    # Home Manager
-    hms = "home-manager switch --flake ${flakeDir}#foomaxchu@pasokon";
-    hmu = "nix flake update --flake ${flakeDir} && home-manager switch --flake ${flakeDir}#foomaxchu@pasokon";
+    # Home Manager. The # is backslash-escaped because zsh with EXTENDED_GLOB
+    # treats an unquoted # as a glob operator when the alias text is expanded.
+    hms = "home-manager switch --flake ${flakeDir}\\#foomaxchu@pasokon";
+    hmu = "nix flake update --flake ${flakeDir} && home-manager switch --flake ${flakeDir}\\#foomaxchu@pasokon";
   };
 
   renderAlias = name: value: "alias ${name}=${lib.escapeShellArg value}";
