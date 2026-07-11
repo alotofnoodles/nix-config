@@ -1,10 +1,6 @@
 # Programs configured declaratively (as opposed to raw dotfiles in files.nix).
-{ pkgs, hunk, system, ... }:
+{ pkgs, hunk, claude-code, system, ... }:
 {
-  # ── hunk ─────────────────────────────────────────────────────────────────
-  # Terminal-first diff viewer from github:modem-dev/hunk. The module's default
-  # package is `pkgs.hunk` (absent from nixpkgs), so point it at the flake's own
-  # build. Settings render to ~/.config/hunk/config.toml.
   programs.hunk = {
     enable = true;
     package = hunk.packages.${system}.hunk;
@@ -19,9 +15,6 @@
     enableJujutsuIntegration = true;
   };
 
-  # ── Git ──────────────────────────────────────────────────────────────────
-  # Translated from your ~/.config/git/config. Home Manager writes this file,
-  # so edit it here from now on, not in ~/.config/git/config.
   programs.git = {
     enable = true;
     settings = {
@@ -56,13 +49,6 @@
     };
   };
 
-  # delta stays available as a standalone CLI (see packages.nix) but is no
-  # longer the git pager — hunk is (programs.hunk.enableGitIntegration above).
-
-  # ── jj (jujutsu) ─────────────────────────────────────────────────────────
-  # Git-compatible VCS. Settings render to ~/.config/jj/config.toml.
-  # NB: `home.packages = [ pkgs.jj ]` would install an unrelated JSON tool;
-  # this module installs pkgs.jujutsu, whose binary is also called `jj`.
   programs.jujutsu = {
     enable = true;
     settings = {
@@ -80,14 +66,11 @@
     };
   };
 
-  # ── Claude Code ──────────────────────────────────────────────────────────
-  # Installs the CLI and renders ~/.claude/settings.json. Home Manager writes
-  # settings.json as a read-only symlink, so in-app changes that target user
-  # settings (/config, user-level "always allow") can't save — edit here and
-  # `hms` instead. Project-level .claude/settings.local.json and runtime state
-  # in ~/.claude.json are untouched and stay writable.
   programs.claude-code = {
     enable = true;
+    # Use sadjow/claude-code-nix instead of nixpkgs: tracks upstream releases
+    # within hours and ships prebuilt via claude-code.cachix.org.
+    package = claude-code.packages.${system}.default;
     settings = {
       model = "claude-fable-5[1m]";
       effortLevel = "medium";

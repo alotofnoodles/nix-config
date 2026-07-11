@@ -20,9 +20,14 @@
       url = "github:modem-dev/hunk";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+
+    # claude-code: always-current packaging of Claude Code, ahead of nixpkgs.
+    # Deliberately NOT following our nixpkgs: the claude-code.cachix.org cache
+    # is only valid against its own pinned nixpkgs.
+    claude-code.url = "github:sadjow/claude-code-nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, hunk, ... }:
+  outputs = { self, nixpkgs, home-manager, hunk, claude-code, ... }:
     let
       mkHome = { system, module }:
         home-manager.lib.homeManagerConfiguration {
@@ -30,8 +35,8 @@
             inherit system;
             config.allowUnfree = true;
           };
-          # Make the hunk flake input (and system) visible to modules.
-          extraSpecialArgs = { inherit hunk system; };
+          # Make the hunk/claude-code flake inputs (and system) visible to modules.
+          extraSpecialArgs = { inherit hunk claude-code system; };
           modules = [
             hunk.homeManagerModules.default
             ./modules/shared
