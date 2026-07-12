@@ -63,6 +63,12 @@
 
       # Push new bookmarks without needing --allow-new every time.
       git.push-new-bookmarks = true;
+
+      # Short subcommand aliases: `jj s` = status, `jj d` = diff.
+      aliases = {
+        s = [ "status" ];
+        d = [ "diff" ];
+      };
     };
   };
 
