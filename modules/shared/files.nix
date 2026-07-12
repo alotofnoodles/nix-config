@@ -11,4 +11,12 @@
   # ~/.config/starship.toml
   # Omarchy's shell already runs `starship init`; this just supplies the config.
   xdg.configFile."starship.toml".source = ./config/starship.toml;
+
+  # ~/.config/nix/nix.conf  (user-level; system config is Determinate's
+  # /etc/nix/nix.conf). warn-dirty silences the "Git tree has uncommitted
+  # changes" warning, which fires constantly under jj since git HEAD always
+  # trails the working-copy change.
+  xdg.configFile."nix/nix.conf".text = ''
+    warn-dirty = false
+  '';
 }
