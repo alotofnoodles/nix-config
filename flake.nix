@@ -25,9 +25,26 @@
     # Deliberately NOT following our nixpkgs: the claude-code.cachix.org cache
     # is only valid against its own pinned nixpkgs.
     claude-code.url = "github:sadjow/claude-code-nix";
+
+    # try: ephemeral workspace manager (tobi/try; the nixpkgs `try` is an
+    # unrelated tool). Ships its own home-manager module (programs.try),
+    # configured in modules/apps/try.nix. Follows our nixpkgs — it's a plain
+    # ruby script wrap, nothing cache-sensitive.
+    try = {
+      url = "github:tobi/try";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # herdr: terminal multiplexer for coding agents (herdr.dev; not in
+    # nixpkgs). Built from source via its flake — no binary cache — so it
+    # follows our nixpkgs to avoid carrying a second nixpkgs closure.
+    herdr = {
+      url = "github:ogulcancelik/herdr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, hunk, claude-code, ... }:
+  outputs = { self, nixpkgs, home-manager, hunk, claude-code, try, herdr, ... }:
     let
       mkHome = { system, module }:
         home-manager.lib.homeManagerConfiguration {
@@ -35,11 +52,13 @@
             inherit system;
             config.allowUnfree = true;
           };
-          # Make the hunk/claude-code flake inputs (and system) visible to modules.
-          extraSpecialArgs = { inherit hunk claude-code system; };
+          # Make the hunk/claude-code/herdr flake inputs (and system) visible
+          # to modules.
+          extraSpecialArgs = { inherit hunk claude-code herdr system; };
           modules = [
             hunk.homeManagerModules.default
-            ./modules/shared
+            try.homeModules.default
+            ./modules
             module
           ];
         };

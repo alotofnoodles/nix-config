@@ -1,0 +1,91 @@
+# Custom fzf ZLE widgets, verbatim from omarchy-zsh's `shell/zoptions`:
+#   https://github.com/omacom-io/omarchy-zsh/blob/master/shell/zoptions
+#
+# Sourced by modules/shared/zsh.nix via readFile (lib.mkOrder 550), i.e. before
+# zsh-syntax-highlighting, so these widgets get highlighted.
+#
+# NOTE: the file widget is renamed from upstream's `fzf-file-widget` to
+# `omz-fzf-file-widget`. programs.fzf's zsh integration defines its own widget
+# named `fzf-file-widget` (Ctrl-T) and loads after this file, so keeping the
+# upstream name would let it clobber this one — the rename keeps Ctrl+Alt+F on
+# omarchy's fd-based picker while Ctrl-T stays fzf's standard file widget.
+
+if command -v fzf &>/dev/null; then
+  # fzf file/directory search widget (Ctrl+Alt+F)
+  omz-fzf-file-widget() {
+    local fd_cmd=$(command -v fdfind || command -v fd || echo "fd")
+    local current_token="${LBUFFER##* }"
+    local expanded_token=""
+    if [[ -n "$current_token" ]]; then
+      expanded_token=$(eval echo "$current_token" 2>/dev/null || echo "$current_token")
+    fi
+
+    local selected
+    if [[ "$expanded_token" == */ ]] && [[ -d "$expanded_token" ]]; then
+      selected=$($fd_cmd --color=always --base-directory="$expanded_token" 2>/dev/null | \
+        fzf --multi --ansi --prompt="Directory $expanded_token> " \
+          --preview="[[ -d $expanded_token{} ]] && ls -lah $expanded_token{} || bat --color=always --style=numbers $expanded_token{} 2>/dev/null || cat $expanded_token{}")
+      [[ -n "$selected" ]] && selected="${expanded_token}${selected}"
+    else
+      selected=$($fd_cmd --color=always 2>/dev/null | \
+        fzf --multi --ansi --prompt="Directory> " --query="$expanded_token" \
+          --preview="[[ -d {} ]] && ls -lah {} || bat --color=always --style=numbers {} 2>/dev/null || cat {}")
+    fi
+
+    if [[ -n "$selected" ]]; then
+      selected=$(printf '%q' "$selected")
+      LBUFFER="${LBUFFER%$current_token}${selected} "
+    fi
+    zle reset-prompt
+  }
+  zle -N omz-fzf-file-widget
+  bindkey '^[^F' omz-fzf-file-widget  # Ctrl+Alt+F
+
+  # fzf git log search widget (Ctrl+Alt+L)
+  fzf-git-log-widget() {
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
+      echo "Not in a git repository." >&2
+      return 1
+    fi
+
+    local selected
+    selected=$(git log --no-show-signature --color=always \
+      --format='%C(bold blue)%h%C(reset) - %C(cyan)%ad%C(reset) %C(yellow)%d%C(reset) %C(normal)%s%C(reset)  %C(dim normal)[%an]%C(reset)' \
+      --date=short | \
+      fzf --ansi --multi --scheme=history --prompt="Git Log> " \
+        --preview='git show --color=always --stat --patch {1}' \
+        --preview-window=right:50%:wrap | \
+      awk '{print $1}' | \
+      xargs -I {} git rev-parse {} 2>/dev/null | \
+      tr '\n' ' ')
+
+    if [[ -n "$selected" ]]; then
+      LBUFFER="${LBUFFER}${selected}"
+    fi
+    zle reset-prompt
+  }
+  zle -N fzf-git-log-widget
+  bindkey '^[^L' fzf-git-log-widget  # Ctrl+Alt+L
+
+  # fzf variables search widget (Ctrl+Alt+V)
+  fzf-variables-widget() {
+    local current_token="${LBUFFER##* }"
+    local cleaned_token="${current_token#\$}"
+
+    local selected
+    selected=$(typeset -p | awk '{print $1, $2}' | sort -u | awk '{print $2}' | \
+      fzf --multi --prompt="Variables> " --preview-window=wrap \
+        --preview='echo {} && typeset -p {} 2>/dev/null || echo "No details available"' \
+        --query="$cleaned_token")
+
+    if [[ -n "$selected" ]]; then
+      if [[ "$current_token" == \$* ]]; then
+        selected="\$${selected}"
+      fi
+      LBUFFER="${LBUFFER%$current_token}${selected} "
+    fi
+    zle reset-prompt
+  }
+  zle -N fzf-variables-widget
+  bindkey '^[^V' fzf-variables-widget  # Ctrl+Alt+V
+fi

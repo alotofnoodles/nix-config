@@ -1,0 +1,51 @@
+# herdr keybindings, mirroring tmux.conf so muscle memory carries over.
+# herdr terms: workspace ≈ tmux session, tab ≈ tmux window, pane ≈ pane.
+# Reload a running server with: herdr server reload-config
+# Defaults not listed here are unchanged (see: herdr --default-config).
+
+[keys]
+# Standard ctrl+b prefix, same as tmux.
+prefix = "ctrl+b"
+
+# Panes — h/v splits, x to kill, ctrl+alt+arrows to focus, z to zoom (all as in tmux.conf)
+split_horizontal = "prefix+h" # stacked, like tmux split-window -v
+split_vertical = "prefix+v"   # side-by-side, like tmux split-window -h
+close_pane = "prefix+x"
+zoom = "prefix+z"
+focus_pane_left = "ctrl+alt+left"
+focus_pane_down = "ctrl+alt+down"
+focus_pane_up = "ctrl+alt+up"
+focus_pane_right = "ctrl+alt+right"
+# prefix+h/j/k/l are freed above; rename_pane moves off prefix+shift+p (used
+# for previous_workspace below) onto shift+t, freed by rename_tab = prefix+r.
+rename_pane = "prefix+shift+t"
+# Back-and-forth to the last focused pane, across tabs AND workspaces — one
+# action covering tmux's last-window (l), last-pane (;) and last-session (L).
+last_pane = "prefix+l"
+
+# Tabs = tmux windows — c new, k kill, r rename, n/p cycle, alt+1..9 direct
+new_tab = "prefix+c"
+close_tab = "prefix+k"
+rename_tab = "prefix+r"
+next_tab = "prefix+n"
+previous_tab = "prefix+p"
+switch_tab = "prefix+1..9"
+# resize_mode's default was prefix+r (now rename); tmux has no mode equivalent
+# (it uses ctrl+alt+shift+arrows directly), so park it on a free chord.
+resize_mode = "prefix+m"
+
+# Workspaces = tmux sessions — shifted variants, as in tmux.conf
+new_workspace = "prefix+shift+c"
+close_workspace = "prefix+shift+k"
+rename_workspace = "prefix+shift+r"
+previous_workspace = "prefix+shift+p"
+next_workspace = "prefix+shift+n"
+
+# General — d detach and q reload, as in tmux.conf (herdr defaults were swapped:
+# detach on q, reload on shift+r)
+detach = "prefix+d"
+reload_config = "prefix+q"
+
+# alt+1..9 switches tabs directly, like tmux's M-1..9 window bindings.
+[keys.indexed]
+tabs = "alt"
