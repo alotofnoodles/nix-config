@@ -7,7 +7,7 @@
     # within hours and ships prebuilt via claude-code.cachix.org.
     package = claude-code.packages.${system}.default;
     settings = {
-      model = "claude-fable-5[1m]";
+      model = "claude-opus-4-8";
       effortLevel = "medium";
       statusLine = {
         type = "command";
