@@ -10,6 +10,10 @@ let
     e = "nvim";
     music = "cliamp --provider ytmusic";
 
+    # Claude Code, skipping permission prompts.
+    cx = "claude --dangerously-skip-permissions";
+    c = "opencode";
+
     # Home Manager. The # is backslash-escaped because zsh with EXTENDED_GLOB
     # treats an unquoted # as a glob operator when the alias text is expanded.
     hms = "home-manager switch --flake ${flakeDir}\\#foomaxchu@pasokon";
@@ -18,6 +22,14 @@ let
     ".." = "cd ..";
     "..." = "cd ../..";
     "...." = "cd ../../..";
+
+    # Omarchy defaults.
+    cd = "zd";
+    j = "z"; # zoxide jump
+    d = "docker";
+    lzd = "lazydocker";
+    g = "git";
+    r = "rails";
 
     # eza-flavoured ls (from omanix)
     ls = "eza -lh --group-directories-first --icons=auto";
