@@ -21,15 +21,14 @@ bindkey -e
 # Meta/UTF-8 settings
 setopt COMBINING_CHARS
 
-# History configuration
-HISTFILE=~/.zsh_history
-HISTSIZE=32768
-SAVEHIST=32768
-setopt APPEND_HISTORY           # Append to history file
-setopt SHARE_HISTORY            # Share history across sessions
-setopt HIST_IGNORE_DUPS         # Ignore duplicate commands
-setopt HIST_IGNORE_ALL_DUPS     # Remove older duplicate from history
-setopt HIST_IGNORE_SPACE        # Ignore commands starting with space
+# History configuration.
+#
+# HISTFILE/HISTSIZE/SAVEHIST and the dup/share/space options are NOT set here.
+# This file is spliced in with mkAfter, so assignments here would run after —
+# and silently override — programs.zsh.history. They live in
+# modules/common/zsh.nix instead, with `path` set per-host.
+#
+# Only the two options with no programs.zsh.history equivalent remain:
 setopt HIST_REDUCE_BLANKS       # Remove unnecessary blanks
 setopt HIST_VERIFY              # Don't execute immediately upon history expansion
 

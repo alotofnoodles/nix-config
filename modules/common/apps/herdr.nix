@@ -3,9 +3,9 @@
 # home-manager module, so this is a plain package install plus a raw config
 # file (same style as tmux.conf); runtime state lives under
 # ~/.local/share/herdr.
-{ herdr, system, ... }:
+{ herdr, pkgs, ... }:
 {
-  home.packages = [ herdr.packages.${system}.default ];
+  home.packages = [ herdr.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # ~/.config/herdr/config.toml — tmux-matching keybindings.
   xdg.configFile."herdr/config.toml".source = ./herdr/config.toml;

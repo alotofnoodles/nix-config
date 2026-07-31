@@ -44,30 +44,47 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, hunk, claude-code, try, herdr, ... }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
     let
-      mkHome = { system, module }:
+      mkHome =
+        { system, module }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
           };
-          # Make the hunk/claude-code/herdr flake inputs (and system) visible
-          # to modules.
-          extraSpecialArgs = { inherit hunk claude-code herdr system; };
-          modules = [
-            hunk.homeManagerModules.default
-            try.homeModules.default
-            ./modules/common
-            module
-          ];
+          # `inputs` is the whole contract. modules/common/default.nix unpacks
+          # what it needs via _module.args, and imports the home-manager modules
+          # that ship with hunk/try itself — so a foreign flake importing
+          # homeModules.common passes `inputs` and nothing else, and does not
+          # re-declare those inputs.
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ module ];
         };
     in
     {
+      # Cross-platform modules, for consumption by other flakes (e.g. the work
+      # Mac's separate config). Importers must also pass `inputs` through
+      # extraSpecialArgs:
+      #
+      #   extraSpecialArgs = { inputs = nix-config.inputs; };
+      #   modules = [ nix-config.homeModules.common ./hosts/work-mac.nix ];
+      #
+      # Everything reachable from here must evaluate on both x86_64-linux and
+      # aarch64-darwin. Linux-only bits live in ./modules/linux.
+      homeModules.common = ./modules/common;
+
       # Activate with:  home-manager switch --flake .#foomaxchu@pasokon
       homeConfigurations."foomaxchu@pasokon" = mkHome {
         system = "x86_64-linux";
         module = ./hosts/pasokon;
       };
+
     };
 }

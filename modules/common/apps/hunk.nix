@@ -1,9 +1,9 @@
 # hunk: terminal-first diff viewer, pulled from its own flake (not in nixpkgs).
-{ hunk, system, ... }:
+{ hunk, pkgs, ... }:
 {
   programs.hunk = {
     enable = true;
-    package = hunk.packages.${system}.hunk;
+    package = hunk.packages.${pkgs.stdenv.hostPlatform.system}.hunk;
     settings = {
       theme = "graphite";
       mode = "split";
