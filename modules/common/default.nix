@@ -4,10 +4,10 @@
 { ... }:
 {
   imports = [
-    ./core/shell.nix
-    ./core/aliases.nix
-    ./core/git.nix
-    ./core/packages.nix
+    ./zsh.nix
+    ./aliases.nix
+    ./git.nix
+    ./packages.nix
     ./apps/herdr.nix
     ./apps/tmux.nix
     ./apps/try.nix

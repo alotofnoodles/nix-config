@@ -58,7 +58,7 @@
           modules = [
             hunk.homeManagerModules.default
             try.homeModules.default
-            ./modules
+            ./modules/common
             module
           ];
         };
@@ -67,7 +67,7 @@
       # Activate with:  home-manager switch --flake .#foomaxchu@pasokon
       homeConfigurations."foomaxchu@pasokon" = mkHome {
         system = "x86_64-linux";
-        module = ./hosts/pasokon.nix;
+        module = ./hosts/pasokon;
       };
     };
 }
