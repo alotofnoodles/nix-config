@@ -2,6 +2,13 @@
   description = "alotofnoodles Home Manager config";
 
   inputs = {
+    # nixos-unstable, not a release branch: this repo installs fast-moving dev
+    # CLIs where being two releases behind is the failure mode. Note it is
+    # nixos-unstable, not nixpkgs-unstable — the former only advances after the
+    # NixOS Hydra jobset passes, so it is the better-tested of the two.
+    #
+    # The work flake `follows` this input rather than declaring its own, which
+    # keeps both machines on one revision.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
@@ -86,5 +93,23 @@
         module = ./hosts/pasokon;
       };
 
+      # The shared module must evaluate on darwin too, or a lock bump here breaks
+      # the work Mac rather than this machine. This builds
+      # homeModules.common the way the work flake consumes it — plain
+      # legacyPackages, only `inputs` passed — so `nix flake check` catches a
+      # linux-only mistake before it is pushed.
+      checks.aarch64-darwin.common-evaluates-on-darwin =
+        (home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+          extraSpecialArgs = { inherit inputs; };
+          modules = [
+            self.homeModules.common
+            {
+              home.username = "u";
+              home.homeDirectory = "/Users/u";
+              home.stateVersion = "26.05";
+            }
+          ];
+        }).activationPackage;
     };
 }
