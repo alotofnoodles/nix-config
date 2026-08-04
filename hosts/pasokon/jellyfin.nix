@@ -35,8 +35,6 @@ in
     };
 
     Service = {
-      # nixpkgs' wrapper already passes --ffmpeg (jellyfin-ffmpeg) and
-      # --webdir, so only the writable dirs need pinning here.
       ExecStart = "${pkgs.jellyfin}/bin/jellyfin --datadir %h/.local/share/jellyfin --cachedir %h/.cache/jellyfin";
       Restart = "on-failure";
       RestartSec = 5;

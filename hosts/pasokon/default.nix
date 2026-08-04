@@ -6,6 +6,7 @@
     ../../modules/linux
     ./claude.nix
     ./jellyfin.nix
+    ./qbittorrent.nix
   ];
 
   home.username = "foomaxchu";
