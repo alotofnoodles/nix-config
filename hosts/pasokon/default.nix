@@ -7,6 +7,13 @@
     ./claude.nix
     ./jellyfin.nix
     ./qbittorrent.nix
+    ./radarr.nix
+    ./sonarr.nix
+    ./prowlarr.nix
+    ./bazarr.nix
+    ./jellyseerr.nix
+    ./recyclarr.nix
+    ./caddy.nix
   ];
 
   home.username = "foomaxchu";
