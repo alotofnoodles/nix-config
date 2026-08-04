@@ -5,6 +5,7 @@
     ../../modules/common
     ../../modules/linux
     ./claude.nix
+    ./jellyfin.nix
   ];
 
   home.username = "foomaxchu";
