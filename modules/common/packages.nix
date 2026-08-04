@@ -37,5 +37,9 @@
     curl
     wget
     unzip
+    fastfetch # system info / fetch
+    pandoc # universal document converter
+    imagemagick # convert/mogrify/identify
+    rclone # sync to cloud storage
   ];
 }
