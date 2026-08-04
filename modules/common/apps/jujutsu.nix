@@ -1,6 +1,10 @@
 # Jujutsu VCS.
-{ config, ... }:
+{ config, pkgs, ... }:
 {
+  # jjui: a terminal UI for browsing/operating on the jj repo. No declarative
+  # config of its own, so it rides along here next to programs.jujutsu.
+  home.packages = [ pkgs.jjui ];
+
   programs.jujutsu = {
     enable = true;
     settings = {
