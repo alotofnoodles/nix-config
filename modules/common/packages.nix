@@ -20,6 +20,12 @@
     lazygit
     delta
 
+    # Containers — CLI + TUI only. The docker *daemon* stays a system service
+    # (pacman on pasokon, Docker Desktop on the Mac); docker-client is CLI-only
+    # and just talks to whatever daemon owns /var/run/docker.sock.
+    docker-client
+    lazydocker
+
     # AI
     opencode
 
