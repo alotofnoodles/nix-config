@@ -9,8 +9,8 @@
 # The shell-heavy parts live verbatim in ./zsh/*.zsh and are spliced in
 # with readFile (so they read like normal zsh, with editor highlighting and
 # linting, instead of escaped Nix strings). Ordering matters:
-#   - tool-inits + fzf-widgets go in early (mkOrder 550) so the widgets are
-#     defined before zsh-syntax-highlighting loads and thus get highlighted;
+#   - tool-inits goes in early (mkOrder 550), before zsh-syntax-highlighting
+#     loads;
 #   - options (completion zstyles etc.) go in late (mkAfter) so they run after
 #     Home Manager's compinit and after the plugins.
 #
@@ -46,7 +46,6 @@
 
     initContent = lib.mkMerge [
       (lib.mkOrder 550 (builtins.readFile ./zsh/tool-inits.zsh))
-      (lib.mkOrder 550 (builtins.readFile ./zsh/fzf-widgets.zsh))
       (lib.mkAfter (builtins.readFile ./zsh/options.zsh))
       # Aliases are managed in aliases.nix and rendered to a POSIX-neutral
       # fragment shared with bash. Source it last so aliases win. The -host
@@ -61,7 +60,7 @@
 
   # fzf standard integration (Ctrl-R history, Ctrl-T files, Alt-C cd) plus
   # completion — self-contained from nixpkgs, replacing the /usr/share/fzf
-  # sourcing omarchy used. Coexists with the custom widgets in fzf-widgets.zsh.
+  # sourcing omarchy used.
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
